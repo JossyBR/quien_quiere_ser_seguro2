@@ -40,7 +40,7 @@ let capsEntries = entries.map((entry) => [
 sequelize.models = Object.fromEntries(capsEntries);
 
 //*========================  Modelos Importados  ===========================//
-const { Comisiones } = sequelize.models;
+const { Preguntas } = sequelize.models;
 
 //*========================  Relaciones de las tablas  ===========================//
 
