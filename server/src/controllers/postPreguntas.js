@@ -1,7 +1,7 @@
 const { Preguntas } = require("../db");
 const { v4: uuidv4 } = require("uuid");
 
-const crearPreguntas = async (req, res) => {
+const postPreguntas = async (req, res) => {
   try {
     const id = uuidv4();
     const {
@@ -43,4 +43,4 @@ const crearPreguntas = async (req, res) => {
   }
 };
 
-module.exports = crearPreguntas;
+module.exports = postPreguntas;
