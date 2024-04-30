@@ -3,10 +3,7 @@ import { Inertia } from "@inertiajs/inertia";
 import { Link } from "@inertiajs/inertia-react";
 
 const AdminPreguntas = ({ preguntas }) => {
-  // const eliminarPregunta = (id) => {
-  //     // Código para eliminar pregunta
-  //     Inertia.delete(`/admin/preguntas/${id}`);
-  // };
+  
 
   return (
     <div>

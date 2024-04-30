@@ -1,39 +1,92 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addPregunta } from "../features/preguntas/preguntasSlice";
 
 const FormularioPostEdit = () => {
-  // const [form, setForm] = useState({
-  //     pregunta: "",
-  //     respuesta1: "",
-  //     respuesta2: "",
-  //     respuesta3: "",
-  //     respuesta4: "",
-  //     respuesta_correcta: "",
-  // });
+  const dispatch = useDispatch();
+  const preguntas = useSelector((state) => state.preguntas);
 
-  // const handleChange = (e) => {
-  //     const { name, value } = e.target;
-  //     setForm({ ...form, [name]: value });
-  // };
+  const [form, setForm] = useState({
+    pregunta: "",
+    respuesta1: "",
+    respuesta2: "",
+    respuesta3: "",
+    respuesta4: "",
+    respuesta_correcta: "",
+  });
 
-  // const handleSubmit = (e) => {
-  //     e.preventDefault();
-  //     Inertia.post("/pregunta", form);
-  // };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    //1RO VALIDACIÓN
+    if (
+      !form.pregunta ||
+      !form.respuesta1 ||
+      !form.respuesta2 ||
+      !form.respuesta3 ||
+      !form.respuesta4 ||
+      !form.respuesta_correcta
+    ) {
+      alert("Por favor completa todos los campos.");
+      return;
+    }
+    const url = "http://localhost:3001/preguntas/";
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Especificamos que el cuerpo de la solicitud es un JSON
+      },
+      body: JSON.stringify(form), // Convertimos el estado del formulario a JSON
+    })
+      .then((response) => {
+        console.log("response1: ", response);
+        if (!response.ok) {
+          console.log("response2: ", response);
+          throw new Error("Respuesta no exitosa");
+        }
+        console.log("response3: ", response);
+        return response.json();
+      })
+
+      .then((data) => {
+        console.log("Success:", data);
+        alert("Pregunta creada con exito");
+        // dispatch(addPregunta(form));
+        setForm({
+          pregunta: "",
+          respuesta1: "",
+          respuesta2: "",
+          respuesta3: "",
+          respuesta4: "",
+          respuesta_correcta: "",
+        });
+      })
+      .catch((error) => {
+        console.error("Error", error);
+        alert("Error al crear la pregunta");
+      });
+
+    // Opción de almacenar en Local Storage antes de enviar
+    // localStorage.setItem("currentQuestion", JSON.stringify(form));
+    // console.log("guardado en Local Storage", form);
+  };
   return (
     <div>
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
-          {/* <div>
-                        <Link href="/admin/preguntas">Regresar</Link>
-                    </div>
-                    <label htmlFor="pregunta">Escribe una pregunta</label> */}
+          <label htmlFor="pregunta">Escribe una pregunta</label>
           <input
             type="text"
             id="pregunta"
             name="pregunta"
-            // value={form.pregunta}
-            // onChange={handleChange}
+            value={form.pregunta}
+            onChange={handleChange}
             required
           />
         </div>
@@ -44,8 +97,8 @@ const FormularioPostEdit = () => {
             type="text"
             id="respuesta1"
             name="respuesta1"
-            // value={form.respuesta1}
-            // onChange={handleChange}
+            value={form.respuesta1}
+            onChange={handleChange}
             required
           />
           /{" "}
@@ -56,8 +109,8 @@ const FormularioPostEdit = () => {
             type="text"
             id="respuesta2"
             name="respuesta2"
-            // value={form.respuesta2}
-            // onChange={handleChange}
+            value={form.respuesta2}
+            onChange={handleChange}
             required
           />
         </div>
@@ -67,8 +120,8 @@ const FormularioPostEdit = () => {
             type="text"
             id="respuesta3"
             name="respuesta3"
-            // value={form.respuesta3}
-            // onChange={handleChange}
+            value={form.respuesta3}
+            onChange={handleChange}
             required
           />
         </div>
@@ -78,8 +131,8 @@ const FormularioPostEdit = () => {
             type="text"
             id="respuesta4"
             name="respuesta4"
-            // value={form.respuesta4}
-            // onChange={handleChange}
+            value={form.respuesta4}
+            onChange={handleChange}
             required
           />
         </div>
@@ -90,32 +143,23 @@ const FormularioPostEdit = () => {
           <select
             id="respuesta_correcta"
             name="respuesta_correcta"
-            // value={form.respuesta_correcta}
-            // onChange={handleChange}
+            value={form.respuesta_correcta}
+            onChange={handleChange}
             required
           >
-            {/* Asegúrate de que las opciones estén disponibles solo si la respuesta correspondiente no está vacía */}
-            {/* <option>Seleccione</option>
-                        {form.respuesta1 && (
-                            <option value={form.respuesta1}>
-                                {form.respuesta1}
-                            </option>
-                        )}
-                        {form.respuesta2 && (
-                            <option value={form.respuesta2}>
-                                {form.respuesta2}
-                            </option>
-                        )}
-                        {form.respuesta3 && (
-                            <option value={form.respuesta3}>
-                                {form.respuesta3}
-                            </option>
-                        )}
-                        {form.respuesta4 && (
-                            <option value={form.respuesta4}>
-                                {form.respuesta4}
-                            </option>
-                        )}*/}
+            <option>Seleccione</option>
+            {form.respuesta1 && (
+              <option value={form.respuesta1}>{form.respuesta1}</option>
+            )}
+            {form.respuesta2 && (
+              <option value={form.respuesta2}>{form.respuesta2}</option>
+            )}
+            {form.respuesta3 && (
+              <option value={form.respuesta3}>{form.respuesta3}</option>
+            )}
+            {form.respuesta4 && (
+              <option value={form.respuesta4}>{form.respuesta4}</option>
+            )}
           </select>
         </div>
 

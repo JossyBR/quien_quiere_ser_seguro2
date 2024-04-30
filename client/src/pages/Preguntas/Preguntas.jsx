@@ -28,10 +28,10 @@ const Preguntas = (
           <Link
             className="flex items-center gap-1 font-bold"
             rel="stylesheet"
-            href="/admin/preguntas"
+            to="/crear"
           >
             {" "}
-            inicio
+            CRUD
             {/* <FaEye className="h-4 w-4" /> Preguntas{" "} */}
           </Link>
         </div>
