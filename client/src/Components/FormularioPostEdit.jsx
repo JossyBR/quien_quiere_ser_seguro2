@@ -36,6 +36,7 @@ const FormularioPostEdit = () => {
       return;
     }
     const url = "http://localhost:3001/preguntas/";
+    console.log("Enviando datos:", JSON.stringify(form)); // Ver los datos que se envían
 
     fetch(url, {
       method: "POST",
@@ -45,9 +46,9 @@ const FormularioPostEdit = () => {
       body: JSON.stringify(form), // Convertimos el estado del formulario a JSON
     })
       .then((response) => {
-        console.log("response1: ", response);
+        console.log("Response status:", response.status);
         if (!response.ok) {
-          console.log("response2: ", response);
+          console.log("Response problem:", response.statusText);
           throw new Error("Respuesta no exitosa");
         }
         console.log("response3: ", response);
