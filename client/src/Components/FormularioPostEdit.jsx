@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addPregunta } from "../features/preguntas/preguntasSlice";
+// import { addPregunta } from "../features/preguntas/preguntasSlice";
+import { sendPregunta } from "../features/preguntas/preguntasSlice";
 
 const FormularioPostEdit = () => {
   const dispatch = useDispatch();
   const preguntas = useSelector((state) => state.preguntas);
 
   const [form, setForm] = useState({
-    pregunta: "",
+    preguntas: "",
     respuesta1: "",
     respuesta2: "",
     respuesta3: "",
@@ -25,7 +26,7 @@ const FormularioPostEdit = () => {
 
     //1RO VALIDACIÓN
     if (
-      !form.pregunta ||
+      !form.preguntas ||
       !form.respuesta1 ||
       !form.respuesta2 ||
       !form.respuesta3 ||
@@ -35,48 +36,12 @@ const FormularioPostEdit = () => {
       alert("Por favor completa todos los campos.");
       return;
     }
-    const url = "http://localhost:3001/preguntas/";
-    console.log("Enviando datos:", JSON.stringify(form)); // Ver los datos que se envían
-
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json", // Especificamos que el cuerpo de la solicitud es un JSON
-      },
-      body: JSON.stringify(form), // Convertimos el estado del formulario a JSON
-    })
-      .then((response) => {
-        console.log("Response status:", response.status);
-        if (!response.ok) {
-          console.log("Response problem:", response.statusText);
-          throw new Error("Respuesta no exitosa");
-        }
-        console.log("response3: ", response);
-        return response.json();
-      })
-
-      .then((data) => {
-        console.log("Success:", data);
-        alert("Pregunta creada con exito");
-        // dispatch(addPregunta(form));
-        setForm({
-          pregunta: "",
-          respuesta1: "",
-          respuesta2: "",
-          respuesta3: "",
-          respuesta4: "",
-          respuesta_correcta: "",
-        });
-      })
-      .catch((error) => {
-        console.error("Error", error);
-        alert("Error al crear la pregunta");
-      });
-
+    dispatch(sendPregunta(form));
     // Opción de almacenar en Local Storage antes de enviar
     // localStorage.setItem("currentQuestion", JSON.stringify(form));
     // console.log("guardado en Local Storage", form);
   };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -84,9 +49,9 @@ const FormularioPostEdit = () => {
           <label htmlFor="pregunta">Escribe una pregunta</label>
           <input
             type="text"
-            id="pregunta"
-            name="pregunta"
-            value={form.pregunta}
+            id="preguntas"
+            name="preguntas"
+            value={form.preguntas}
             onChange={handleChange}
             required
           />
