@@ -4,7 +4,7 @@ import { useLocation, useParams } from "react-router-dom";
 // import { addPregunta } from "../features/preguntas/preguntasSlice";
 import {
   sendPregunta,
-  // editPregunta,
+  editPregunta,
 } from "../features/preguntas/preguntasSlice";
 
 const FormularioPostEdit = () => {
@@ -26,7 +26,9 @@ const FormularioPostEdit = () => {
 
   useEffect(() => {
     if (isEditing && preguntaId) {
+      console.log("ID de la pregunta:", preguntaId);
       const pregunta = preguntas.find((p) => p.id === preguntaId);
+      console.log("Pregunta encontrada:", pregunta);
       if (pregunta) {
         setForm({
           preguntas: pregunta.preguntas,
@@ -36,6 +38,8 @@ const FormularioPostEdit = () => {
           respuesta4: pregunta.respuesta4,
           respuesta_correcta: pregunta.respuesta_correcta,
         });
+      } else {
+        console.log("Pregunta no encontrada con ID:", preguntaId);
       }
     }
   }, [isEditing, preguntaId, preguntas]);
@@ -60,12 +64,16 @@ const FormularioPostEdit = () => {
       alert("Por favor completa todos los campos.");
       return;
     }
+    const action = isEditing
+      ? editPregunta({ id: preguntaId, ...form })
+      : sendPregunta(form);
+    dispatch(action);
 
-    if (isEditing) {
-      dispatch(editPregunta({ id: preguntaId, ...form }));
-    } else {
-      dispatch(sendPregunta(form));
-    }
+    // if (isEditing) {
+    //   dispatch(editPregunta({ id: preguntaId, ...form }));
+    // } else {
+    //   dispatch(sendPregunta(form));
+    // }
     // Opción de almacenar en Local Storage antes de enviar
     // localStorage.setItem("currentQuestion", JSON.stringify(form));
     // console.log("guardado en Local Storage", form);
@@ -75,7 +83,7 @@ const FormularioPostEdit = () => {
     <div>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="pregunta">Escribe una pregunta</label>
+          <label htmlFor="preguntas">Escribe una pregunta</label>
           <input
             type="text"
             id="preguntas"

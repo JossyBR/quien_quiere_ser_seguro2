@@ -43,7 +43,27 @@ export const sendPregunta = createAsyncThunk(
   }
 );
 
-
+export const editPregunta = createAsyncThunk(
+  "preguntas/editPregunta",
+  async ({ id, ...data }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:3001/preguntas/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "aplication/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error("No se pudo actualizar la pregunta");
+      }
+      const updatedPregunta = await response.json();
+      return updatedPregunta;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 // Definimos el slice
 const preguntasSlice = createSlice({
@@ -79,6 +99,21 @@ const preguntasSlice = createSlice({
         state.loading = false;
       })
       .addCase(sendPregunta.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(editPregunta.fulfilled, (state, action) => {
+        const index = state.preguntas.findIndex(
+          (p) => p.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.preguntas[index] = action.payload;
+        }
+      })
+      .addCase(editPregunta.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(editPregunta.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });
