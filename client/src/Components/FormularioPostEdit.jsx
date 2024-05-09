@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useLocation, useParams } from "react-router-dom";
 // import { addPregunta } from "../features/preguntas/preguntasSlice";
-import { sendPregunta } from "../features/preguntas/preguntasSlice";
+import {
+  sendPregunta,
+  // editPregunta,
+} from "../features/preguntas/preguntasSlice";
 
 const FormularioPostEdit = () => {
   const dispatch = useDispatch();
-  const preguntas = useSelector((state) => state.preguntas);
+  const location = useLocation();
+  const { preguntaId } = useParams();
+  const isEditing = location.pathname.includes("editar");
+
+  const preguntas = useSelector((state) => state.preguntas.preguntas);
 
   const [form, setForm] = useState({
     preguntas: "",
@@ -15,6 +23,22 @@ const FormularioPostEdit = () => {
     respuesta4: "",
     respuesta_correcta: "",
   });
+
+  useEffect(() => {
+    if (isEditing && preguntaId) {
+      const pregunta = preguntas.find((p) => p.id === preguntaId);
+      if (pregunta) {
+        setForm({
+          preguntas: pregunta.preguntas,
+          respuesta1: pregunta.respuesta1,
+          respuesta2: pregunta.respuesta2,
+          respuesta3: pregunta.respuesta3,
+          respuesta4: pregunta.respuesta4,
+          respuesta_correcta: pregunta.respuesta_correcta,
+        });
+      }
+    }
+  }, [isEditing, preguntaId, preguntas]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,7 +60,12 @@ const FormularioPostEdit = () => {
       alert("Por favor completa todos los campos.");
       return;
     }
-    dispatch(sendPregunta(form));
+
+    if (isEditing) {
+      dispatch(editPregunta({ id: preguntaId, ...form }));
+    } else {
+      dispatch(sendPregunta(form));
+    }
     // Opción de almacenar en Local Storage antes de enviar
     // localStorage.setItem("currentQuestion", JSON.stringify(form));
     // console.log("guardado en Local Storage", form);
@@ -128,8 +157,11 @@ const FormularioPostEdit = () => {
             )}
           </select>
         </div>
+        <button type="submit">
+          {isEditing ? "Editar Pregunta" : "Crear Pregunta"}
+        </button>
 
-        <button type="submit">Crear pregunta</button>
+        {/* <button type="submit">Crear pregunta</button> */}
       </form>
     </div>
   );

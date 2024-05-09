@@ -4,6 +4,7 @@ import Home from "./pages/Home/Home";
 import FormularioPostEdit from "./Components/FormularioPostEdit";
 import Preguntas from "./pages/Preguntas/Preguntas";
 import "./App.css";
+import AdminPreguntas from "./pages/Admin/AdminPreguntas";
 
 function App() {
   return (
@@ -11,8 +12,10 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/crear" element={<FormularioPostEdit />} />
           <Route path="/juego" element={<Preguntas />} />
+          <Route path="/crear" element={<FormularioPostEdit />} />
+          <Route path="/editar/:id" element={<FormularioPostEdit />} />
+          <Route path="/admin" element={<AdminPreguntas />} />
         </Routes>
       </Router>
     </>

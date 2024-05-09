@@ -25,13 +25,24 @@ const Preguntas = (
       </h1>
       <div className="mb-4 flex justify-between items-center">
         <div>
+          <Link to="/admin">CRUD</Link>
           <Link
             className="flex items-center gap-1 font-bold"
             rel="stylesheet"
             to="/crear"
           >
             {" "}
-            CRUD
+            Crear
+            {/* <FaEye className="h-4 w-4" /> Preguntas{" "} */}
+          </Link>
+
+          <Link
+            className="flex items-center gap-1 font-bold"
+            rel="stylesheet"
+            to="/editar"
+          >
+            {" "}
+            Editar
             {/* <FaEye className="h-4 w-4" /> Preguntas{" "} */}
           </Link>
         </div>

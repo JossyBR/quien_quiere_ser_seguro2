@@ -1,7 +1,25 @@
 // Importamos createSlice y createAsyncThunk
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// Definimos la acción asíncrona con createAsyncThunk
+//Obtener preguntas
+export const loadPreguntas = createAsyncThunk(
+  "preguntas/loadPreguntas",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:3001/preguntas");
+      if (!response.ok) {
+        throw new Error("No se pudo cargar las preguntas");
+      }
+      const data = await response.json();
+      console.log("Obteniendo los datos: ", data);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.toString());
+    }
+  }
+);
+
+// Crear preguntas
 export const sendPregunta = createAsyncThunk(
   "preguntas/sendPregunta", // Identificador de la acción
   async (preguntaData, { rejectWithValue }) => {
@@ -25,6 +43,8 @@ export const sendPregunta = createAsyncThunk(
   }
 );
 
+
+
 // Definimos el slice
 const preguntasSlice = createSlice({
   name: "preguntas",
@@ -40,6 +60,17 @@ const preguntasSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(loadPreguntas.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loadPreguntas.fulfilled, (state, action) => {
+        state.preguntas = action.payload;
+        state.loading = false;
+      })
+      .addCase(loadPreguntas.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
       .addCase(sendPregunta.pending, (state) => {
         state.loading = true;
       })
