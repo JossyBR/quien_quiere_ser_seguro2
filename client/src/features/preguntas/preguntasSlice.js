@@ -50,15 +50,34 @@ export const editPregunta = createAsyncThunk(
       const response = await fetch(`http://localhost:3001/preguntas/${id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "aplication/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
+      alert("Pregunta editada exitosamente");
       if (!response.ok) {
         throw new Error("No se pudo actualizar la pregunta");
       }
       const updatedPregunta = await response.json();
       return updatedPregunta;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deletePregunta = createAsyncThunk(
+  "preguntas/deletePregunta",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:3001/preguntas/${id}`, {
+        method: "DELETE",
+      });
+      alert("Pregunta eliminada exitosamente");
+      if (!response.ok) {
+        throw new Error("No se pudo eliminar la pregunta");
+      }
+      return id;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -114,6 +133,19 @@ const preguntasSlice = createSlice({
         state.loading = true;
       })
       .addCase(editPregunta.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
+      })
+      .addCase(deletePregunta.fulfilled, (state, action) => {
+        state.preguntas = state.preguntas.filter(
+          (p) => p.id !== action.payload
+        );
+        state.loading = false;
+      })
+      .addCase(deletePregunta.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deletePregunta.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });

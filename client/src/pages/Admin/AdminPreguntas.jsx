@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { loadPreguntas } from "../../features/preguntas/preguntasSlice";
+import DeletePreguntas from "../../Components/DeletePreguntas";
 
 const AdminPreguntas = () => {
   const dispatch = useDispatch();
   const preguntas = useSelector((state) => state.preguntas.preguntas);
   console.log("preguntas: ", preguntas);
+  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(loadPreguntas());
@@ -14,6 +17,15 @@ const AdminPreguntas = () => {
 
   const handleDelete = (id) => {
     console.log("Eliminar pregunta con ID:", id);
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    navigate("/admin"); // Opcional: redirigir después de cerrar
   };
 
   return (
@@ -49,14 +61,17 @@ const AdminPreguntas = () => {
                 <td>{pregunta.respuesta_correcta}</td>
                 <td>
                   <Link to={`/editar/${pregunta.id}`}>Editar</Link>
-                  <button onClick={() => handleDelete(pregunta.id)}>
+                  <button onClick={handleOpenModal}>Eliminar</button>
+
+                  {/* <button onClick={() => handleDelete(pregunta.id)}>
                     Eliminar
-                  </button>
+                  </button> */}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <DeletePreguntas isOpen={modalOpen} onClose={handleCloseModal} />
       </div>
     </div>
   );

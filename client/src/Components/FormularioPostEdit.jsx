@@ -11,6 +11,7 @@ const FormularioPostEdit = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const { preguntaId } = useParams();
+  console.log("ID 1: ",preguntaId)
   const isEditing = location.pathname.includes("editar");
 
   const preguntas = useSelector((state) => state.preguntas.preguntas);
