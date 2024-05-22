@@ -3,16 +3,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { deletePregunta } from "../features/preguntas/preguntasSlice";
 
-const DeletePreguntas = ({ isOpen, onClose }) => {
-  const { preguntaId } = useParams();
+const DeletePreguntas = ({ isOpen, onClose, preguntaId }) => {
+  // const { preguntaId } = useParams();
+  console.log("ID en DeletePreguntas:", preguntaId); // Para depuración
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log('Soy el de DeletePreguntas: ', preguntaId)
+  console.log("Soy el de DeletePreguntas con ID: ", preguntaId);
 
   const handleDelete = async () => {
-    await dispatch(deletePregunta(preguntaId));
-    onClose(); // Cierra el modal después de la acción
-    navigate("/admin"); // Navega a la página de administración
+    if (preguntaId) {
+      await dispatch(deletePregunta(preguntaId));
+      onClose(); // Cierra el modal después de la acción
+      navigate("/admin"); // Navega a la página de administración
+    }
   };
 
   if (!isOpen) return null;

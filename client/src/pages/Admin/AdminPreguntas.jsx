@@ -10,6 +10,8 @@ const AdminPreguntas = () => {
   console.log("preguntas: ", preguntas);
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
+  const [currentPreguntaId, setCurrentPreguntaId] = useState(null);
+  console.log("Soy el currentPreguntaId: ", currentPreguntaId);
 
   useEffect(() => {
     dispatch(loadPreguntas());
@@ -19,13 +21,15 @@ const AdminPreguntas = () => {
     console.log("Eliminar pregunta con ID:", id);
   };
 
-  const handleOpenModal = () => {
-    setModalOpen(true);
+  const handleOpenModal = (id) => {
+    setCurrentPreguntaId(id); // Establecer el ID de la pregunta actual aquí
+    setModalOpen(true); // Abrir el modal
   };
 
   const handleCloseModal = () => {
     setModalOpen(false);
-    navigate("/admin"); // Opcional: redirigir después de cerrar
+    setCurrentPreguntaId(null); // Reset the current pregunta ID
+    navigate("/admin"); // Redirigir después de cerrar
   };
 
   return (
@@ -61,7 +65,9 @@ const AdminPreguntas = () => {
                 <td>{pregunta.respuesta_correcta}</td>
                 <td>
                   <Link to={`/editar/${pregunta.id}`}>Editar</Link>
-                  <button onClick={handleOpenModal}>Eliminar</button>
+                  <button onClick={() => handleOpenModal(pregunta.id)}>
+                    Eliminar
+                  </button>
 
                   {/* <button onClick={() => handleDelete(pregunta.id)}>
                     Eliminar
@@ -71,7 +77,11 @@ const AdminPreguntas = () => {
             ))}
           </tbody>
         </table>
-        <DeletePreguntas isOpen={modalOpen} onClose={handleCloseModal} />
+        <DeletePreguntas
+          isOpen={modalOpen}
+          onClose={handleCloseModal}
+          preguntaId={currentPreguntaId}
+        />
       </div>
     </div>
   );

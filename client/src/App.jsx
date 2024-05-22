@@ -17,7 +17,10 @@ function App() {
           <Route path="/crear" element={<FormularioPostEdit />} />
           <Route path="/editar/:preguntaId" element={<FormularioPostEdit />} />
           <Route path="/admin" element={<AdminPreguntas />} />
-          <Route path="/eliminar/:preguntaId" element={<DeletePreguntas />} />
+          <Route
+            path="/admin/eliminar/:preguntaId"
+            element={<DeletePreguntas />}
+          />
         </Routes>
       </Router>
     </>
