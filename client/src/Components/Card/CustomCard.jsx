@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Card,
@@ -7,16 +7,41 @@ import {
   Image,
   useSelect,
 } from "@nextui-org/react";
+import { validarRespuesta } from "../../utils/utils";
+import Swal from "sweetalert2";
 
 const CustomCard = ({ preguntaIndex }) => {
   const preguntas = useSelector((state) => state.preguntas.preguntas);
   const pregunta = preguntas[preguntaIndex];
-  const dispatch = useDispatch();
+  const [selectRespuesta, setSelectRespuesta] = useState(null);
 
   useEffect(() => {
-    console.log("Este es el preguntaIndex: ", preguntaIndex);
-    console.log("pregunta: ", pregunta);
-  }, [preguntaIndex, pregunta]);
+    // Resetear selectRespuesta cuando cambia la pregunta
+    setSelectRespuesta(null);
+  }, [preguntaIndex]);
+
+  const handleResCorrecta = (respuesta) => {
+    const esCorrecta = validarRespuesta(respuesta, pregunta.respuesta_correcta);
+    setSelectRespuesta(respuesta);
+
+    if (selectRespuesta !== null) {
+      return;
+    }
+
+    if (esCorrecta) {
+      Swal.fire({
+        icon: "success",
+        title: "¡Correcto",
+        text: "Has seleccionado la respuesta correcta",
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "¡Incorrecto",
+        text: "Has seleccionado la respuesta incorrecta",
+      });
+    }
+  };
 
   return (
     <div>
@@ -24,10 +49,74 @@ const CustomCard = ({ preguntaIndex }) => {
       {pregunta ? (
         <div>
           <p>{pregunta.preguntas}</p>
-          <boton>{pregunta.respuesta1}</boton>
-          <boton className="ml-2">{pregunta.respuesta2}</boton>
-          <boton className="ml-2">{pregunta.respuesta3}</boton>
-          <boton className="ml-2">{pregunta.respuesta4}</boton>
+          <div
+            onClick={() => handleResCorrecta(pregunta.respuesta1)}
+            style={{
+              backgroundColor:
+                selectRespuesta === pregunta.respuesta1
+                  ? validarRespuesta(
+                      pregunta.respuesta1,
+                      pregunta.respuesta_correcta
+                    )
+                    ? "green"
+                    : "red"
+                  : "transparent",
+              pointerEvents: selectRespuesta !== null ? "none" : "auto",
+            }}
+          >
+            {pregunta.respuesta1}
+          </div>
+          <div
+            onClick={() => handleResCorrecta(pregunta.respuesta2)}
+            style={{
+              backgroundColor:
+                selectRespuesta === pregunta.respuesta2
+                  ? validarRespuesta(
+                      pregunta.respuesta2,
+                      pregunta.respuesta_correcta
+                    )
+                    ? "green"
+                    : "red"
+                  : "transparent",
+              pointerEvents: selectRespuesta !== null ? "none" : "auto",
+            }}
+          >
+            {pregunta.respuesta2}
+          </div>
+          <div
+            onClick={() => handleResCorrecta(pregunta.respuesta3)}
+            style={{
+              backgroundColor:
+                selectRespuesta === pregunta.respuesta3
+                  ? validarRespuesta(
+                      pregunta.respuesta3,
+                      pregunta.respuesta_correcta
+                    )
+                    ? "green"
+                    : "red"
+                  : "transparent",
+              pointerEvents: selectRespuesta !== null ? "none" : "auto",
+            }}
+          >
+            {pregunta.respuesta3}
+          </div>
+          <div
+            onClick={() => handleResCorrecta(pregunta.respuesta4)}
+            style={{
+              backgroundColor:
+                selectRespuesta === pregunta.respuesta4
+                  ? validarRespuesta(
+                      pregunta.respuesta4,
+                      pregunta.respuesta_correcta
+                    )
+                    ? "green"
+                    : "red"
+                  : "transparent",
+              pointerEvents: selectRespuesta !== null ? "none" : "auto",
+            }}
+          >
+            {pregunta.respuesta4}
+          </div>
           <p>{pregunta.respuesta_correcta}</p>
         </div>
       ) : (
