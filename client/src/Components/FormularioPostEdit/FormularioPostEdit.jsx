@@ -5,7 +5,7 @@ import { useLocation, useParams } from "react-router-dom";
 import {
   sendPregunta,
   editPregunta,
-} from "../features/preguntas/preguntasSlice";
+} from "../../features/preguntas/preguntasSlice";
 
 const FormularioPostEdit = () => {
   const dispatch = useDispatch();

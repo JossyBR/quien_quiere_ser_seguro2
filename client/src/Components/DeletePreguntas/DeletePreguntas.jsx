@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { deletePregunta } from "../features/preguntas/preguntasSlice";
+import { deletePregunta } from "../../features/preguntas/preguntasSlice";
 
 const DeletePreguntas = ({ isOpen, onClose, preguntaId }) => {
   // const { preguntaId } = useParams();

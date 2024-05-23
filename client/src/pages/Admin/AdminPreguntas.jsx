@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { loadPreguntas } from "../../features/preguntas/preguntasSlice";
-import DeletePreguntas from "../../Components/DeletePreguntas";
+import DeletePreguntas from "../../Components/DeletePreguntas/DeletePreguntas";
 
 const AdminPreguntas = () => {
   const dispatch = useDispatch();
@@ -17,9 +17,9 @@ const AdminPreguntas = () => {
     dispatch(loadPreguntas());
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    console.log("Eliminar pregunta con ID:", id);
-  };
+  // const handleDelete = (id) => {
+  //   console.log("Eliminar pregunta con ID:", id);
+  // };
 
   const handleOpenModal = (id) => {
     setCurrentPreguntaId(id); // Establecer el ID de la pregunta actual aquí
