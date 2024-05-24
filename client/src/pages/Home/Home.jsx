@@ -3,6 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import CustomCard from "../../Components/Card/CustomCard";
 import { loadPreguntas } from "../../features/preguntas/preguntasSlice";
+import {
+  incrementarPuntaje,
+  incrementarNivel,
+  chequearProgresoNivel,
+} from "../../utils/utils";
+import Swal from "sweetalert2";
 // import Swal from "sweetalert2";
 // import { BsHourglassSplit } from "react-icons/bs";
 // import {
@@ -18,6 +24,15 @@ const Home = () => {
   const preguntas = useSelector((state) => state.preguntas.preguntas);
   //Mantener el indice de la pregunta actual
   const [currentPreguntaIndex, setCurrentPreguntaIndex] = useState(0);
+
+  const [puntaje, setPuntaje] = useState(0);
+  const [nivel, setNivel] = useState(1);
+  const [respuestasCorrectas, setRespuestasCorrectas] = useState(0);
+  const [ayuda, setAyuda] = useState(false);
+
+  console.log("soy el nivel:", nivel);
+  console.log("soy puntaje: ", puntaje);
+  console.log("soy respuestascorrectas:", respuestasCorrectas);
 
   //Se deben obtener las preguntas del back.
   useEffect(() => {
@@ -48,6 +63,35 @@ const Home = () => {
     });
   };
 
+  const manejarRespuestaCorrecta = () => {
+    // Incrementar el puntaje actual en 100 puntos
+    setPuntaje((prevPuntaje) => incrementarPuntaje(prevPuntaje));
+    // Actualizar el número de respuestas correctas
+    setRespuestasCorrectas((prevRespuestasCorrectas) => {
+      const nuevasRespuestasCorrectas = prevRespuestasCorrectas + 1;
+
+      //Verifica si el usuario he respondido a tres preguntas correctas en el nivel actual
+      if (chequearProgresoNivel(nuevasRespuestasCorrectas)) {
+        // Calcula el nuevo nivel antes de actualizar el estado
+        const nuevoNivel = incrementarNivel(nivel);
+        Swal.fire({
+          icon: "Sucess",
+          title: "¡Siguiente Nivel",
+          text: `Has pasado al siguiente nivel: ${nuevoNivel}`,
+        });
+        // Actualizar el estado del nivel al nuevo nivel
+        setNivel((prevNivel) => incrementarNivel(prevNivel));
+        return 0; // Reiniciar el contador de respuestas correctas para el nuevo nivel
+      }
+      // Si no ha respondido correctamente a tres preguntas, simplemente retornar el nuevo número de respuestas correctas
+      return nuevasRespuestasCorrectas;
+    });
+  };
+
+  const manejarAyuda = () => {
+    setAyuda(true);
+  };
+
   return (
     <div className={` text-black min-h-screen p-8`}>
       <h1 className="text-xl text-center md:text-4xl font-bold mb-4">
@@ -61,7 +105,7 @@ const Home = () => {
           <button
             // onClick={reiniciarJuego}
             // onClick={manejarReiniciarJuego}
-            className=" text-white font-bold py-2 px-4 rounded mr-2"
+            className="font-bold py-2 px-4 rounded mr-2"
           >
             Reiniciar
             {/* <FaRedoAlt className="h-5 w-5" /> */}
@@ -71,8 +115,8 @@ const Home = () => {
       <div className=" flex items-center justify-between">
         <div>
           <button
-            // onClick={manejarAyudaCincuenta}
-            className="border-2 rounded-full text-white font-bold px-2 "
+            onClick={manejarAyuda}
+            className="border-2 rounded-full font-bold px-2 "
           >
             50/50
           </button>
@@ -92,7 +136,7 @@ const Home = () => {
       <div className="flex gap-1 mt-4">
         {/* <MdSportsScore className="h-7 w-7" /> */}
         <p className="text-base">
-          Nivel Actual: <span className="font-bold text-lg">xxx</span>
+          Nivel Actual: <span className="font-bold text-lg">{nivel}</span>
         </p>
       </div>
       <div className="border mt-2">
@@ -104,16 +148,18 @@ const Home = () => {
       <div className="flex gap-1 mt-4">
         {/* <MdSportsScore className="h-7 w-7" /> */}
         <p className="text-base">
-          {/* Puntaje actual:{" "} */}
-
-          <span className="font-bold text-lg">Puntaje</span>
+          Puntaje actual:
+          <span className="font-bold text-lg">{puntaje}</span>
         </p>
       </div>
       <div className={`flex justify-center`}>
         <div>
           <div>
             {preguntas.length > 0 && (
-              <CustomCard preguntaIndex={currentPreguntaIndex} />
+              <CustomCard
+                preguntaIndex={currentPreguntaIndex}
+                manejarRespuestaCorrecta={manejarRespuestaCorrecta}
+              />
             )}
           </div>
         </div>
