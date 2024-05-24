@@ -111,7 +111,6 @@ const Home = () => {
       </div>
       <div className={`flex justify-center`}>
         <div>
-          <h2 className="text-lg font-bold mb-4 text-center">pregunta</h2>
           <div>
             {preguntas.length > 0 && (
               <CustomCard preguntaIndex={currentPreguntaIndex} />
