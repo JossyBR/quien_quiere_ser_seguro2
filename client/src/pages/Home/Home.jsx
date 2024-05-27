@@ -47,6 +47,10 @@ const Home = () => {
     setCurrentPreguntaIndex((prevIndex) => {
       // Incrementa el índice de la pregunta actual
       const newIndex = prevIndex + 1;
+
+      // Resetea la ayuda cuando se cambia la pregunta
+      setAyuda(false);
+
       // Si el nuevo índice es menor que el número total de preguntas, se actualiza el índice
       // Si no, se mantiene el índice actual (no se incrementa más allá del último índice)
       return newIndex < preguntas.length ? newIndex : prevIndex;
@@ -57,6 +61,10 @@ const Home = () => {
     setCurrentPreguntaIndex((prevIndex) => {
       // Decrementa el índice de la pregunta actual
       const newIndex = prevIndex - 1;
+      
+      // Resetea la ayuda cuando se cambia la pregunta
+      setAyuda(false);
+
       // Si el nuevo índice es mayor o igual a 0, se actualiza el índice
       // Si no, se mantiene el índice actual (no se decrementa más allá del primer índice)
       return newIndex >= 0 ? newIndex : prevIndex;
@@ -159,6 +167,7 @@ const Home = () => {
               <CustomCard
                 preguntaIndex={currentPreguntaIndex}
                 manejarRespuestaCorrecta={manejarRespuestaCorrecta}
+                ayuda={ayuda}
               />
             )}
           </div>

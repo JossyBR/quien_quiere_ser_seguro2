@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Card, CardHeader, CardBody } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/react";
 import Swal from "sweetalert2";
 import { validarRespuesta } from "../../utils/utils";
 
@@ -45,17 +45,20 @@ const CustomCard = ({ preguntaIndex, manejarRespuestaCorrecta, ayuda }) => {
         },
       ];
 
-      if (ayuda) {
+      if (ayuda && preguntaIndex === preguntas.indexOf(pregunta)) {
         const respuestasFiltradas = [
           respuestas.find((respuesta) => respuesta.esCorrecta),
-          respuestas.find((respuesta) => !respuesta.esCorrecta),
+          // respuestas.find((respuesta) => !respuesta.esCorrecta),
+          ...respuestas
+            .filter((respuesta) => !respuesta.esCorrecta)
+            .slice(0, 1),
         ];
         setRespuestasMostrar(respuestasFiltradas);
       } else {
         setRespuestasMostrar(respuestas);
       }
     }
-  }, [preguntaIndex, pregunta, ayuda]);
+  }, [preguntaIndex, pregunta, ayuda, preguntas]);
 
   const handleResCorrecta = (respuesta) => {
     // Si ya se ha seleccionado una respuesta, no hacer nada
