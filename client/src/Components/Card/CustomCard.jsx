@@ -4,7 +4,12 @@ import { Card, CardBody } from "@nextui-org/react";
 import Swal from "sweetalert2";
 import { validarRespuesta } from "../../utils/utils";
 
-const CustomCard = ({ preguntaIndex, manejarRespuestaCorrecta, ayuda }) => {
+const CustomCard = ({
+  preguntaIndex,
+  manejarRespuestaCorrecta,
+  ayuda,
+  respondida,
+}) => {
   const preguntas = useSelector((state) => state.preguntas.preguntas);
   const pregunta = preguntas[preguntaIndex];
   const [selectRespuesta, setSelectRespuesta] = useState(null);
@@ -63,6 +68,11 @@ const CustomCard = ({ preguntaIndex, manejarRespuestaCorrecta, ayuda }) => {
   const handleResCorrecta = (respuesta) => {
     // Si ya se ha seleccionado una respuesta, no hacer nada
     if (selectRespuesta !== null) {
+      Swal.fire({
+        icon: "info",
+        title: "Pregunta ya respondida",
+        text: "Ya has respondido esta pregunta, ve a la siguiente.",
+      });
       return;
     }
 

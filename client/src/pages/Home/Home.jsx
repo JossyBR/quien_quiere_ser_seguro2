@@ -29,6 +29,7 @@ const Home = () => {
   const [nivel, setNivel] = useState(1);
   const [respuestasCorrectas, setRespuestasCorrectas] = useState(0);
   const [ayuda, setAyuda] = useState(false);
+  const [respondidas, setRespondidas] = useState([]);
 
   console.log("soy el nivel:", nivel);
   console.log("soy puntaje: ", puntaje);
@@ -44,6 +45,14 @@ const Home = () => {
   }, [preguntas]);
 
   const handleNext = () => {
+    if (!respondidas[currentPreguntaIndex]) {
+      Swal.fire({
+        icon: "Warning",
+        title: "No has respondido",
+        text: "Debes responder la pregunta",
+      });
+      return;
+    }
     setCurrentPreguntaIndex((prevIndex) => {
       // Incrementa el índice de la pregunta actual
       const newIndex = prevIndex + 1;
@@ -58,10 +67,18 @@ const Home = () => {
   };
 
   const handlePrevious = () => {
+    if (respondidas[currentPreguntaIndex]) {
+      Swal.fire({
+        icon: "Warning",
+        title: "Pregunta ya respondida",
+        text: "No puedes regresar a la pregunta",
+      });
+      return;
+    }
     setCurrentPreguntaIndex((prevIndex) => {
       // Decrementa el índice de la pregunta actual
       const newIndex = prevIndex - 1;
-      
+
       // Resetea la ayuda cuando se cambia la pregunta
       setAyuda(false);
 
@@ -93,6 +110,11 @@ const Home = () => {
       }
       // Si no ha respondido correctamente a tres preguntas, simplemente retornar el nuevo número de respuestas correctas
       return nuevasRespuestasCorrectas;
+    });
+    setRespondidas((prevRespondidas) => {
+      const nuevasRespondidas = [...prevRespondidas];
+      nuevasRespondidas[currentPreguntaIndex] = true;
+      return nuevasRespondidas;
     });
   };
 
@@ -168,6 +190,7 @@ const Home = () => {
                 preguntaIndex={currentPreguntaIndex}
                 manejarRespuestaCorrecta={manejarRespuestaCorrecta}
                 ayuda={ayuda}
+                respondida={respondidas[currentPreguntaIndex]}
               />
             )}
           </div>
