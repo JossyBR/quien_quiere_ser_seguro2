@@ -6,9 +6,11 @@ import { validarRespuesta } from "../../utils/utils";
 
 const CustomCard = ({
   preguntaIndex,
-  manejarRespuestaCorrecta,
+  // manejarRespuestaCorrecta,
+  manejarRespuesta,
   ayuda,
   respondida,
+  respuestasSeleccionadas,
 }) => {
   const preguntas = useSelector((state) => state.preguntas.preguntas);
   const pregunta = preguntas[preguntaIndex];
@@ -50,10 +52,10 @@ const CustomCard = ({
         },
       ];
 
-      if (ayuda && preguntaIndex === preguntas.indexOf(pregunta)) {
+      // Si la ayuda está activada, mostrar solo dos respuestas
+      if (ayuda) {
         const respuestasFiltradas = [
           respuestas.find((respuesta) => respuesta.esCorrecta),
-          // respuestas.find((respuesta) => !respuesta.esCorrecta),
           ...respuestas
             .filter((respuesta) => !respuesta.esCorrecta)
             .slice(0, 1),
@@ -63,62 +65,42 @@ const CustomCard = ({
         setRespuestasMostrar(respuestas);
       }
     }
-  }, [preguntaIndex, pregunta, ayuda, preguntas]);
+  }, [preguntaIndex, pregunta, ayuda]);
 
+  //Maneja la selección de la respuesta, valida si e correcta y llama a "manejarRespuesta"
   const handleResCorrecta = (respuesta) => {
-    // Si ya se ha seleccionado una respuesta, no hacer nada
-    if (selectRespuesta !== null) {
-      Swal.fire({
-        icon: "info",
-        title: "Pregunta ya respondida",
-        text: "Ya has respondido esta pregunta, ve a la siguiente.",
-      });
-      return;
-    }
-
     const esCorrecta = validarRespuesta(
       respuesta.texto,
       pregunta.respuesta_correcta
     );
     setSelectRespuesta(respuesta.texto);
 
-    if (esCorrecta) {
-      manejarRespuestaCorrecta();
-      Swal.fire({
-        icon: "success",
-        title: "¡Correcto!",
-        text: "Has seleccionado la respuesta correcta",
-      });
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "¡Incorrecto!",
-        text: "Has seleccionado la respuesta incorrecta",
-      });
-    }
+    manejarRespuesta(esCorrecta, respuesta.texto);
   };
 
   // Esta función genera la tarjeta con la validación y estilos para seleccionar una respuesta
-  const renderRespuesta = (respuesta) => (
-    <div className="flex flex-row" key={respuesta.texto}>
-      <Card
-        className="w-48 h-48"
-        isPressable
-        onClick={() => handleResCorrecta(respuesta)}
-        css={{
-          backgroundColor:
-            selectRespuesta === respuesta.texto
-              ? validarRespuesta(respuesta.texto, pregunta.respuesta_correcta)
-                ? "green"
-                : "red"
-              : "white",
-          pointerEvents: selectRespuesta !== null ? "none" : "auto",
-        }}
-      >
-        <CardBody>{respuesta.texto}</CardBody>
-      </Card>
-    </div>
-  );
+  const renderRespuesta = (respuesta) => {
+    const seleccionada = respuestasSeleccionadas[preguntaIndex];
+    const esSeleccionada =
+      seleccionada && seleccionada.texto === respuesta.texto;
+    const colorFondo = esSeleccionada
+      ? seleccionada.esCorrecta
+        ? "bg-green-500"
+        : "bg-red-500"
+      : "bg-white";
+
+    return (
+      <div className="flex flex-row" key={respuesta.texto}>
+        <Card
+          className={`w-48 h-48 ${colorFondo}`}
+          isPressable={!respondida}
+          onClick={() => handleResCorrecta(respuesta)}
+        >
+          <CardBody>{respuesta.texto}</CardBody>
+        </Card>
+      </div>
+    );
+  };
 
   return (
     <div>

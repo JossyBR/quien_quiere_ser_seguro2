@@ -24,18 +24,18 @@ const Home = () => {
   const preguntas = useSelector((state) => state.preguntas.preguntas);
   //Mantener el indice de la pregunta actual
   const [currentPreguntaIndex, setCurrentPreguntaIndex] = useState(0);
-
   const [puntaje, setPuntaje] = useState(0);
   const [nivel, setNivel] = useState(1);
   const [respuestasCorrectas, setRespuestasCorrectas] = useState(0);
   const [ayuda, setAyuda] = useState(false);
-  const [respondidas, setRespondidas] = useState([]);
+  const [respondidas, setRespondidas] = useState([]); //Para rastraer si una pregunta ha sido respondida
+  const [respuestasSeleccionadas, setRespuestasSeleccionadas] = useState([]);
 
   console.log("soy el nivel:", nivel);
   console.log("soy puntaje: ", puntaje);
   console.log("soy respuestascorrectas:", respuestasCorrectas);
 
-  //Se deben obtener las preguntas del back.
+  // Cargar las preguntas desde el backend al montar el componente atraves del loadPPreguntas().
   useEffect(() => {
     dispatch(loadPreguntas());
   }, [dispatch]);
@@ -44,10 +44,11 @@ const Home = () => {
     console.log("Preguntas cargadas: ", preguntas);
   }, [preguntas]);
 
+  //Primero verifica si la pregunta actual ha sido respondida antes de permitir avanzar
   const handleNext = () => {
     if (!respondidas[currentPreguntaIndex]) {
       Swal.fire({
-        icon: "Warning",
+        icon: "warning",
         title: "No has respondido",
         text: "Debes responder la pregunta",
       });
@@ -56,67 +57,120 @@ const Home = () => {
     setCurrentPreguntaIndex((prevIndex) => {
       // Incrementa el índice de la pregunta actual
       const newIndex = prevIndex + 1;
-
-      // Resetea la ayuda cuando se cambia la pregunta
-      setAyuda(false);
-
-      // Si el nuevo índice es menor que el número total de preguntas, se actualiza el índice
-      // Si no, se mantiene el índice actual (no se incrementa más allá del último índice)
-      return newIndex < preguntas.length ? newIndex : prevIndex;
+      if (newIndex < preguntas.length) {
+        setAyuda(false); //Resetea la ayuda cuando se cambia a la pregunta
+        return newIndex;
+      }
+      return prevIndex; //No avanza mas alla del ultimo indice
     });
   };
 
+  //Maneja el retroceso de la pregunta anterior
   const handlePrevious = () => {
+    const newIndex = currentPreguntaIndex - 1;
+    if (newIndex >= 0) {
+      setCurrentPreguntaIndex(newIndex);
+    }
+  };
+
+  //Se llama cuando se selecciona una respuesta y asi determinar si es correcta o incorrecta y actualiza el estado de respondidas.
+  const manejarRespuesta = (esCorrecta, respuestaTexto) => {
+    if (esCorrecta) {
+      Swal.fire({
+        icon: "Success",
+        title: "Respuesta Correcta",
+        text: "Tu respuesta es correcta",
+      });
+    }
+
     if (respondidas[currentPreguntaIndex]) {
       Swal.fire({
-        icon: "Warning",
+        icon: "warning",
         title: "Pregunta ya respondida",
-        text: "No puedes regresar a la pregunta",
+        text: "No puedes cambiar la respuesta.",
       });
       return;
     }
-    setCurrentPreguntaIndex((prevIndex) => {
-      // Decrementa el índice de la pregunta actual
-      const newIndex = prevIndex - 1;
 
-      // Resetea la ayuda cuando se cambia la pregunta
-      setAyuda(false);
+    if (esCorrecta) {
+      setPuntaje((prevPuntaje) => incrementarPuntaje(prevPuntaje));
+      setRespuestasCorrectas((prevRespuestasCorrectas) => {
+        const nuevasRespuestasCorrectas = prevRespuestasCorrectas + 1;
+        if (chequearProgresoNivel(nuevasRespuestasCorrectas)) {
+          const nuevoNivel = incrementarNivel(nivel);
+          Swal.fire({
+            icon: "success",
+            title: "¡Siguiente Nivel!",
+            text: `Has pasado al siguiente nivel: ${nuevoNivel}`,
+          });
+          setNivel(nuevoNivel);
+          return 0;
+        }
+        return nuevasRespuestasCorrectas;
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "¡Incorrecto!",
+        text: "Has seleccionado la respuesta incorrecta",
+      });
+    }
 
-      // Si el nuevo índice es mayor o igual a 0, se actualiza el índice
-      // Si no, se mantiene el índice actual (no se decrementa más allá del primer índice)
-      return newIndex >= 0 ? newIndex : prevIndex;
-    });
-  };
-
-  const manejarRespuestaCorrecta = () => {
-    // Incrementar el puntaje actual en 100 puntos
-    setPuntaje((prevPuntaje) => incrementarPuntaje(prevPuntaje));
-    // Actualizar el número de respuestas correctas
-    setRespuestasCorrectas((prevRespuestasCorrectas) => {
-      const nuevasRespuestasCorrectas = prevRespuestasCorrectas + 1;
-
-      //Verifica si el usuario he respondido a tres preguntas correctas en el nivel actual
-      if (chequearProgresoNivel(nuevasRespuestasCorrectas)) {
-        // Calcula el nuevo nivel antes de actualizar el estado
-        const nuevoNivel = incrementarNivel(nivel);
-        Swal.fire({
-          icon: "Sucess",
-          title: "¡Siguiente Nivel",
-          text: `Has pasado al siguiente nivel: ${nuevoNivel}`,
-        });
-        // Actualizar el estado del nivel al nuevo nivel
-        setNivel((prevNivel) => incrementarNivel(prevNivel));
-        return 0; // Reiniciar el contador de respuestas correctas para el nuevo nivel
-      }
-      // Si no ha respondido correctamente a tres preguntas, simplemente retornar el nuevo número de respuestas correctas
-      return nuevasRespuestasCorrectas;
-    });
+    //Marcar la pregunta actual como respondida
     setRespondidas((prevRespondidas) => {
       const nuevasRespondidas = [...prevRespondidas];
       nuevasRespondidas[currentPreguntaIndex] = true;
       return nuevasRespondidas;
     });
+
+    //Almacenar la respuesta seleccionada y si fue correcta
+    setRespuestasSeleccionadas((prevRespuestas) => {
+      const nuevasRespuestas = [...prevRespuestas];
+      nuevasRespuestas[currentPreguntaIndex] = {
+        texto: respuestaTexto,
+        esCorrecta: esCorrecta,
+      };
+      return nuevasRespuestas;
+    });
+
+    //Dejo esta funcionalidad or si mas adelante quiero utilizarla
+    //Avanzar automaticamente a la siguiente pregunta
+    // setCurrentPreguntaIndex((prevIndex) => {
+    //   const newIndex = prevIndex + 1;
+    //   setAyuda(false); //Resetea la ayuda cuando se cambia a la pregunta
+    //   return newIndex < preguntas.length ? newIndex : prevIndex;
+    // });
   };
+
+  // const manejarRespuestaCorrecta = () => {
+  //   // Incrementar el puntaje actual en 100 puntos
+  //   setPuntaje((prevPuntaje) => incrementarPuntaje(prevPuntaje));
+  //   // Actualizar el número de respuestas correctas
+  //   setRespuestasCorrectas((prevRespuestasCorrectas) => {
+  //     const nuevasRespuestasCorrectas = prevRespuestasCorrectas + 1;
+
+  //     //Verifica si el usuario he respondido a tres preguntas correctas en el nivel actual
+  //     if (chequearProgresoNivel(nuevasRespuestasCorrectas)) {
+  //       // Calcula el nuevo nivel antes de actualizar el estado
+  //       const nuevoNivel = incrementarNivel(nivel);
+  //       Swal.fire({
+  //         icon: "Sucess",
+  //         title: "¡Siguiente Nivel",
+  //         text: `Has pasado al siguiente nivel: ${nuevoNivel}`,
+  //       });
+  //       // Actualizar el estado del nivel al nuevo nivel
+  //       setNivel((prevNivel) => incrementarNivel(prevNivel));
+  //       return 0; // Reiniciar el contador de respuestas correctas para el nuevo nivel
+  //     }
+  //     // Si no ha respondido correctamente a tres preguntas, simplemente retornar el nuevo número de respuestas correctas
+  //     return nuevasRespuestasCorrectas;
+  //   });
+  //   setRespondidas((prevRespondidas) => {
+  //     const nuevasRespondidas = [...prevRespondidas];
+  //     nuevasRespondidas[currentPreguntaIndex] = true;
+  //     return nuevasRespondidas;
+  //   });
+  // };
 
   const manejarAyuda = () => {
     setAyuda(true);
@@ -188,9 +242,10 @@ const Home = () => {
             {preguntas.length > 0 && (
               <CustomCard
                 preguntaIndex={currentPreguntaIndex}
-                manejarRespuestaCorrecta={manejarRespuestaCorrecta}
+                manejarRespuesta={manejarRespuesta}
                 ayuda={ayuda}
                 respondida={respondidas[currentPreguntaIndex]}
+                respuestasSeleccionadas={respuestasSeleccionadas}
               />
             )}
           </div>
