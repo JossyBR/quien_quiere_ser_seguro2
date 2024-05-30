@@ -6,7 +6,6 @@ import { validarRespuesta } from "../../utils/utils";
 
 const CustomCard = ({
   preguntaIndex,
-  // manejarRespuestaCorrecta,
   manejarRespuesta,
   ayuda,
   respondida,
@@ -87,6 +86,8 @@ const CustomCard = ({
       ? seleccionada.esCorrecta
         ? "bg-green-500"
         : "bg-red-500"
+      : respuesta.esCorrecta && respondida
+      ? "bg-green-500"
       : "bg-white";
 
     return (
@@ -101,6 +102,28 @@ const CustomCard = ({
       </div>
     );
   };
+  // const renderRespuesta = (respuesta) => {
+  //   const seleccionada = respuestasSeleccionadas[preguntaIndex];
+  //   const esSeleccionada =
+  //     seleccionada && seleccionada.texto === respuesta.texto;
+  //   const colorFondo = esSeleccionada
+  //     ? seleccionada.esCorrecta
+  //       ? "bg-green-500"
+  //       : "bg-red-500"
+  //     : "bg-white";
+
+  //   return (
+  //     <div className="flex flex-row" key={respuesta.texto}>
+  //       <Card
+  //         className={`w-48 h-48 ${colorFondo}`}
+  //         isPressable={!respondida}
+  //         onClick={() => handleResCorrecta(respuesta)}
+  //       >
+  //         <CardBody>{respuesta.texto}</CardBody>
+  //       </Card>
+  //     </div>
+  //   );
+  // };
 
   return (
     <div>

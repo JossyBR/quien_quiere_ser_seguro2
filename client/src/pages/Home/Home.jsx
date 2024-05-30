@@ -75,14 +75,6 @@ const Home = () => {
 
   //Se llama cuando se selecciona una respuesta y asi determinar si es correcta o incorrecta y actualiza el estado de respondidas.
   const manejarRespuesta = (esCorrecta, respuestaTexto) => {
-    if (esCorrecta) {
-      Swal.fire({
-        icon: "Success",
-        title: "Respuesta Correcta",
-        text: "Tu respuesta es correcta",
-      });
-    }
-
     if (respondidas[currentPreguntaIndex]) {
       Swal.fire({
         icon: "warning",
@@ -92,6 +84,38 @@ const Home = () => {
       return;
     }
 
+    const preguntaActual = preguntas[currentPreguntaIndex];
+    const respuestaCorrecta = preguntaActual.respuesta_correcta;
+
+    if (esCorrecta) {
+      Swal.fire({
+        icon: "Success",
+        title: "Respuesta Correcta",
+        text: "Tu respuesta es correcta",
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "¡Incorrecto!",
+        text: "Has seleccionado la respuesta incorrecta",
+      }).then(() => {
+        // Marcar la respuesta correcta
+        setRespuestasSeleccionadas((prevRespuestas) => {
+          const nuevasRespuestas = [...prevRespuestas];
+          nuevasRespuestas[currentPreguntaIndex] = {
+            texto: respuestaTexto,
+            esCorrecta: false,
+          };
+          nuevasRespuestas.push({
+            texto: respuestaCorrecta,
+            esCorrecta: true,
+          });
+          return nuevasRespuestas;
+        });
+      });
+    }
+
+    //Conteo para subir de nivel
     if (esCorrecta) {
       setPuntaje((prevPuntaje) => incrementarPuntaje(prevPuntaje));
       setRespuestasCorrectas((prevRespuestasCorrectas) => {
@@ -107,12 +131,6 @@ const Home = () => {
           return 0;
         }
         return nuevasRespuestasCorrectas;
-      });
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "¡Incorrecto!",
-        text: "Has seleccionado la respuesta incorrecta",
       });
     }
 
