@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import CustomCard from "../../Components/Card/CustomCard";
+import Temporizador from "../../Components/Temporizador/Temporizador";
 import { loadPreguntas } from "../../features/preguntas/preguntasSlice";
 import {
   incrementarPuntaje,
@@ -30,6 +31,7 @@ const Home = () => {
   const [ayuda, setAyuda] = useState(false);
   const [respondidas, setRespondidas] = useState([]); //Para rastraer si una pregunta ha sido respondida
   const [respuestasSeleccionadas, setRespuestasSeleccionadas] = useState([]);
+  const temporizadorRef = useRef(null); //Referencia para el temporizador
 
   console.log("soy el nivel:", nivel);
   console.log("soy puntaje: ", puntaje);
@@ -160,38 +162,17 @@ const Home = () => {
     // });
   };
 
-  // const manejarRespuestaCorrecta = () => {
-  //   // Incrementar el puntaje actual en 100 puntos
-  //   setPuntaje((prevPuntaje) => incrementarPuntaje(prevPuntaje));
-  //   // Actualizar el número de respuestas correctas
-  //   setRespuestasCorrectas((prevRespuestasCorrectas) => {
-  //     const nuevasRespuestasCorrectas = prevRespuestasCorrectas + 1;
-
-  //     //Verifica si el usuario he respondido a tres preguntas correctas en el nivel actual
-  //     if (chequearProgresoNivel(nuevasRespuestasCorrectas)) {
-  //       // Calcula el nuevo nivel antes de actualizar el estado
-  //       const nuevoNivel = incrementarNivel(nivel);
-  //       Swal.fire({
-  //         icon: "Sucess",
-  //         title: "¡Siguiente Nivel",
-  //         text: `Has pasado al siguiente nivel: ${nuevoNivel}`,
-  //       });
-  //       // Actualizar el estado del nivel al nuevo nivel
-  //       setNivel((prevNivel) => incrementarNivel(prevNivel));
-  //       return 0; // Reiniciar el contador de respuestas correctas para el nuevo nivel
-  //     }
-  //     // Si no ha respondido correctamente a tres preguntas, simplemente retornar el nuevo número de respuestas correctas
-  //     return nuevasRespuestasCorrectas;
-  //   });
-  //   setRespondidas((prevRespondidas) => {
-  //     const nuevasRespondidas = [...prevRespondidas];
-  //     nuevasRespondidas[currentPreguntaIndex] = true;
-  //     return nuevasRespondidas;
-  //   });
-  // };
-
   const manejarAyuda = () => {
     setAyuda(true);
+  };
+
+  //Funcion para manejar el tiempo agotado
+  const handleTimeOut = () => {
+    Swal.fire({
+      icon: "error",
+      title: "¡Tiempo terminado!",
+      text: "Se ha acabado el tiempo para responder la pregunta.",
+    });
   };
 
   return (
@@ -229,8 +210,7 @@ const Home = () => {
           className="flex flex-col justify-center gap-2 items-center text-base text-center mb-2 lg:text-2xl"
         >
           <div>
-            <p>Temporizador</p>
-            {/* <Temporizador /> */}
+            <Temporizador ref={temporizadorRef} onTimeOut={handleTimeOut} />
           </div>
         </div>
       </div>{" "}
