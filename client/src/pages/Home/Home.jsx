@@ -10,6 +10,7 @@ import {
   chequearProgresoNivel,
 } from "../../utils/utils";
 import Swal from "sweetalert2";
+import { current } from "@reduxjs/toolkit";
 // import Swal from "sweetalert2";
 // import { BsHourglassSplit } from "react-icons/bs";
 // import {
@@ -32,6 +33,7 @@ const Home = () => {
   const [respondidas, setRespondidas] = useState([]); //Para rastraer si una pregunta ha sido respondida
   const [respuestasSeleccionadas, setRespuestasSeleccionadas] = useState([]);
   const temporizadorRef = useRef(null); //Referencia para el temporizador
+  const [tiemposRestantes, setTiemposRestantes] = useState({}); // Estado para guardar los tiempos restantes
 
   console.log("soy el nivel:", nivel);
   console.log("soy puntaje: ", puntaje);
@@ -46,9 +48,22 @@ const Home = () => {
     console.log("Preguntas cargadas: ", preguntas);
   }, [preguntas]);
 
+  //Guardar el tiempo restante cuando se repsonde una pregunta
+  const guardarTiempoRestante = () => {
+    if (temporizadorRef.current) {
+      setTiemposRestantes((prevTiempos) => ({
+        ...prevTiempos,
+        [currentPreguntaIndex]: temporizadorRef.current.timeLeft,
+      }));
+    }
+  };
+
   //Primero verifica si la pregunta actual ha sido respondida antes de permitir avanzar
   const handleNext = () => {
-    if (!respondidas[currentPreguntaIndex]) {
+    if (
+      !respondidas[currentPreguntaIndex] &&
+      !temporizadorRef.current.isTimeOut
+    ) {
       Swal.fire({
         icon: "warning",
         title: "No has respondido",
@@ -56,11 +71,13 @@ const Home = () => {
       });
       return;
     }
+    guardarTiempoRestante();
     setCurrentPreguntaIndex((prevIndex) => {
       // Incrementa el índice de la pregunta actual
       const newIndex = prevIndex + 1;
       if (newIndex < preguntas.length) {
         setAyuda(false); //Resetea la ayuda cuando se cambia a la pregunta
+        temporizadorRef.current.handleReset(tiemposRestantes[newIndex] || 30);
         return newIndex;
       }
       return prevIndex; //No avanza mas alla del ultimo indice
@@ -72,11 +89,44 @@ const Home = () => {
     const newIndex = currentPreguntaIndex - 1;
     if (newIndex >= 0) {
       setCurrentPreguntaIndex(newIndex);
+      temporizadorRef.current.handleReset(tiemposRestantes[newIndex] || 30);
+    }
+  };
+
+  //Funcion para manejar el tiempo agotado
+  const handleTimeOut = () => {
+    if (!respondidas[currentPreguntaIndex]) {
+      Swal.fire({
+        icon: "error",
+        title: "¡Tiempo terminado!",
+        text: "Se ha acabado el tiempo para responder la pregunta.",
+      });
+      setRespondidas((prevRespondidas) => {
+        const nuevasRespondidas = [...prevRespondidas];
+        nuevasRespondidas[currentPreguntaIndex] = true;
+        return nuevasRespondidas;
+      });
     }
   };
 
   //Se llama cuando se selecciona una respuesta y asi determinar si es correcta o incorrecta y actualiza el estado de respondidas.
   const manejarRespuesta = (esCorrecta, respuestaTexto) => {
+    //Verifica si el tiempo se ha agotado
+    if (temporizadorRef.current.isTimeOut) {
+      Swal.fire({
+        icon: "error",
+        title: "Tiempo agotado",
+        text: "No puedes responder después de que el tiempo se haya terminado.",
+      });
+      return;
+    }
+
+    //Detener el temporizador cuando se selecciona una respuesta
+    if (temporizadorRef.current) {
+      guardarTiempoRestante();
+      temporizadorRef.current.handleStop();
+    }
+
     if (respondidas[currentPreguntaIndex]) {
       Swal.fire({
         icon: "warning",
@@ -164,15 +214,6 @@ const Home = () => {
 
   const manejarAyuda = () => {
     setAyuda(true);
-  };
-
-  //Funcion para manejar el tiempo agotado
-  const handleTimeOut = () => {
-    Swal.fire({
-      icon: "error",
-      title: "¡Tiempo terminado!",
-      text: "Se ha acabado el tiempo para responder la pregunta.",
-    });
   };
 
   return (
