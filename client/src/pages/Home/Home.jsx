@@ -24,7 +24,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const preguntas = useSelector((state) => state.preguntas.preguntas);
   //Mantener el indice de la pregunta actual
-  const [currentPreguntaIndex, setCurrentPreguntaIndex] = useState(0);
+  const [currentPreguntaIndex, setCurrentPreguntaIndex] = useState(0); // Estado para el índice de la pregunta actual
   const [puntaje, setPuntaje] = useState(0);
   const [nivel, setNivel] = useState(1);
   const [respuestasCorrectas, setRespuestasCorrectas] = useState(0);
