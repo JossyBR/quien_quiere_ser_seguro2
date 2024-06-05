@@ -205,11 +205,11 @@ const Home = () => {
 
     //Dejo esta funcionalidad or si mas adelante quiero utilizarla
     //Avanzar automaticamente a la siguiente pregunta
-    // setCurrentPreguntaIndex((prevIndex) => {
-    //   const newIndex = prevIndex + 1;
-    //   setAyuda(false); //Resetea la ayuda cuando se cambia a la pregunta
-    //   return newIndex < preguntas.length ? newIndex : prevIndex;
-    // });
+    setCurrentPreguntaIndex((prevIndex) => {
+      const newIndex = prevIndex + 1;
+      setAyuda(false); //Resetea la ayuda cuando se cambia a la pregunta
+      return newIndex < preguntas.length ? newIndex : prevIndex;
+    });
   };
 
   const manejarAyuda = () => {
