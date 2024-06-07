@@ -49,11 +49,11 @@ const Home = () => {
   }, [preguntas]);
 
   //Guardar el tiempo restante cuando se repsonde una pregunta
-  const guardarTiempoRestante = () => {
+  const guardarTiempoRestante = (index) => {
     if (temporizadorRef.current) {
       setTiemposRestantes((prevTiempos) => ({
         ...prevTiempos,
-        [currentPreguntaIndex]: temporizadorRef.current.timeLeft,
+        [index]: temporizadorRef.current.timeLeft,
       }));
     }
   };
@@ -71,7 +71,7 @@ const Home = () => {
       });
       return;
     }
-    guardarTiempoRestante();
+    guardarTiempoRestante(currentPreguntaIndex);
     setCurrentPreguntaIndex((prevIndex) => {
       // Incrementa el índice de la pregunta actual
       const newIndex = prevIndex + 1;
@@ -86,10 +86,15 @@ const Home = () => {
 
   //Maneja el retroceso de la pregunta anterior
   const handlePrevious = () => {
+    guardarTiempoRestante(currentPreguntaIndex);
     const newIndex = currentPreguntaIndex - 1;
     if (newIndex >= 0) {
       setCurrentPreguntaIndex(newIndex);
-      temporizadorRef.current.handleReset(tiemposRestantes[newIndex] || 30);
+      if (respondidas[newIndex]) {
+        temporizadorRef.current.handleStop(tiemposRestantes[newIndex]);
+      } else {
+        temporizadorRef.current.handleReset(tiemposRestantes[newIndex] || 30);
+      }
     }
   };
 
@@ -123,7 +128,7 @@ const Home = () => {
 
     //Detener el temporizador cuando se selecciona una respuesta
     if (temporizadorRef.current) {
-      guardarTiempoRestante();
+      guardarTiempoRestante(currentPreguntaIndex);
       temporizadorRef.current.handleStop();
     }
 
@@ -205,11 +210,11 @@ const Home = () => {
 
     //Dejo esta funcionalidad or si mas adelante quiero utilizarla
     //Avanzar automaticamente a la siguiente pregunta
-    setCurrentPreguntaIndex((prevIndex) => {
-      const newIndex = prevIndex + 1;
-      setAyuda(false); //Resetea la ayuda cuando se cambia a la pregunta
-      return newIndex < preguntas.length ? newIndex : prevIndex;
-    });
+    // setCurrentPreguntaIndex((prevIndex) => {
+    //   const newIndex = prevIndex + 1;
+    //   setAyuda(false); //Resetea la ayuda cuando se cambia a la pregunta
+    //   return newIndex < preguntas.length ? newIndex : prevIndex;
+    // });
   };
 
   const manejarAyuda = () => {
@@ -222,84 +227,77 @@ const Home = () => {
         ¿QUIEN QUIERE SER SEGURO?
       </h1>
       <div className="mb-4 flex justify-between items-center">
+        {/* Preguntas */}
         <div>
-          <Link to="/admin">CRUD</Link>
+          <Link to="/admin" className="border">
+            Ver Preguntas
+          </Link>
         </div>
+        {/* Temporizador */}
         <div>
-          <button
-            // onClick={reiniciarJuego}
-            // onClick={manejarReiniciarJuego}
-            className="font-bold py-2 px-4 rounded mr-2"
-          >
-            Reiniciar
-            {/* <FaRedoAlt className="h-5 w-5" /> */}
-          </button>
+          <Temporizador ref={temporizadorRef} onTimeOut={handleTimeOut} />
         </div>
-      </div>
-      <div className=" flex items-center justify-between">
-        <div>
-          <button
-            onClick={manejarAyuda}
-            className="border-2 rounded-full font-bold px-2 "
-          >
-            50/50
-          </button>
-        </div>
-
-        <div
-          id="temporizador"
-          className="flex flex-col justify-center gap-2 items-center text-base text-center mb-2 lg:text-2xl"
-        >
+        {/* Ayudas */}
+        <div className="border flex flex-row ">
           <div>
-            <Temporizador ref={temporizadorRef} onTimeOut={handleTimeOut} />
+            <p>Ayudas</p>
+          </div>
+          <div>
+            <button
+              onClick={manejarAyuda}
+              className="border-2 rounded-full font-bold px-2 "
+            >
+              50/50
+            </button>
+          </div>
+          <div>
+            <button
+              // onClick={reiniciarJuego}
+              // onClick={manejarReiniciarJuego}
+              className="font-bold py-2 px-4 rounded mr-2"
+            >
+              Reiniciar
+              {/* <FaRedoAlt className="h-5 w-5" /> */}
+            </button>
           </div>
         </div>
       </div>{" "}
       <br />
-      <div className="flex gap-1 mt-4">
-        {/* <MdSportsScore className="h-7 w-7" /> */}
-        <p className="text-base">
-          Nivel Actual: <span className="font-bold text-lg">{nivel}</span>
-        </p>
-      </div>
-      <div className="border mt-2">
-        <h1 className="text-xl text-center md:text-4xl font-bold mb-4">
-          ¿LOGO?
-        </h1>
-      </div>
-      <div className="border flex items-center">{/* //temporizador */}</div>
-      <div className="flex gap-1 mt-4">
-        {/* <MdSportsScore className="h-7 w-7" /> */}
-        <p className="text-base">
-          Puntaje actual:
-          <span className="font-bold text-lg">{puntaje}</span>
-        </p>
-      </div>
-      <div className={`flex justify-center`}>
-        <div>
-          <div>
-            {preguntas.length > 0 && (
-              <CustomCard
-                preguntaIndex={currentPreguntaIndex}
-                manejarRespuesta={manejarRespuesta}
-                ayuda={ayuda}
-                respondida={respondidas[currentPreguntaIndex]}
-                respuestasSeleccionadas={respuestasSeleccionadas}
-              />
-            )}
-          </div>
+      <div className="border flex flex-row justify-between">
+        <div className="flex gap-1 mt-4">
+          {/* <MdSportsScore className="h-7 w-7" /> */}
+          <p className="text-base">
+            Nivel Actual: <span className="font-bold text-lg">{nivel}</span>
+          </p>
+        </div>
+        <div className="flex gap-1 mt-4">
+          {/* <MdSportsScore className="h-7 w-7" /> */}
+          <p className="text-base">
+            Puntaje actual:
+            <span className="font-bold text-lg">{puntaje}</span>
+          </p>
         </div>
       </div>
-      <div className="flex justify-center mt-2">
+      <div className={`flex justify-center mt-5`}>
+        <div>
+          {preguntas.length > 0 && (
+            <CustomCard
+              preguntaIndex={currentPreguntaIndex}
+              manejarRespuesta={manejarRespuesta}
+              ayuda={ayuda}
+              respondida={respondidas[currentPreguntaIndex]}
+              respuestasSeleccionadas={respuestasSeleccionadas}
+            />
+          )}
+        </div>
+      </div>
+      <div className="flex justify-center mt-24 ">
         <button
           onClick={handlePrevious}
-          className="border-2  font-bold h-10 px-4  rounded-xl"
+          className="border-2  font-bold h-10 px-4  rounded-xl mr-5"
         >
           Anterior
         </button>
-
-        {/* Si indiceactual es menor que totalpreguntas quiere decir que hay mas preguntas despues de la actual se resta 1 de $totalPreguntas para ajustar el hecho de que los índices comienzan en 0 */}
-
         <button
           onClick={handleNext}
           className="border-2   font-bold h-10 px-4 rounded-xl mr-2 hover:scale-105"

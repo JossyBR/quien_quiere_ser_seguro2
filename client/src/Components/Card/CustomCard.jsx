@@ -129,7 +129,7 @@ const CustomCard = ({
     <div>
       {pregunta ? (
         <div className="flex flex-col items-center">
-          <p>{pregunta.preguntas}</p>
+          <p className="border text-lg mb-12">{pregunta.preguntas}</p>
           <div className="flex flex-row gap-4">
             {respuestasMostrar.map(renderRespuesta)}
           </div>
