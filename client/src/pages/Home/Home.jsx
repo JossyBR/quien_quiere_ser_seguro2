@@ -10,7 +10,7 @@ import {
   chequearProgresoNivel,
 } from "../../utils/utils";
 import Swal from "sweetalert2";
-import { current } from "@reduxjs/toolkit";
+import ResetButton from "../../Components/Reset/ResetButton";
 
 import { BsHourglassSplit } from "react-icons/bs";
 import {
@@ -221,6 +221,18 @@ const Home = () => {
     setAyuda(true);
   };
 
+  const handleReset = () => {
+    // setCurrentPreguntaIndex(0);
+    setPuntaje(0);
+    setNivel(1);
+    setRespuestasCorrectas(0);
+    setAyuda(false);
+    setRespondidas([]);
+    setRespuestasSeleccionadas([]);
+    setTiemposRestantes({});
+    temporizadorRef.current.handleReset(30);
+  };
+
   return (
     <div className={` text-black min-h-screen p-8`}>
       <h1 className="text-xl text-center md:text-4xl font-bold mb-4">
@@ -243,7 +255,7 @@ const Home = () => {
           <Temporizador ref={temporizadorRef} onTimeOut={handleTimeOut} />
         </div>
         {/* Ayudas */}
-        <div className="border border-black flex flex-row items-center  rounded-lg h-28 w-52">
+        <div className="border border-black flex flex-row items-center rounded-lg h-28 w-48">
           <div className="border -rotate-90">
             <p className="">Ayudas</p>
           </div>
@@ -256,14 +268,7 @@ const Home = () => {
             </button>
           </div>
           <div>
-            <button
-              // onClick={reiniciarJuego}
-              // onClick={manejarReiniciarJuego}
-              className="font-bold py-2 px-4 rounded mr-2"
-            >
-              Reiniciar
-              <FaRedoAlt className="h-5 w-5" />
-            </button>
+            <ResetButton handleReset={handleReset} />
           </div>
         </div>
       </div>{" "}

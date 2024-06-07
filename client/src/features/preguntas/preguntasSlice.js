@@ -96,6 +96,11 @@ const preguntasSlice = createSlice({
     addPregunta: (state, action) => {
       state.preguntas.push(action.payload);
     },
+    resetJuego: (state) => {
+      state.preguntas = [];
+      state.loading = false;
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -151,6 +156,8 @@ const preguntasSlice = createSlice({
       });
   },
 });
+
+export const { resetJuego } = preguntasSlice.actions;
 
 export default preguntasSlice.reducer;
 
