@@ -179,6 +179,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
+import { FaPlay, FaPause } from "react-icons/fa";
 
 const Temporizador = forwardRef(({ onTimeOut }, ref) => {
   const [timeLeft, setTimeLeft] = useState(30);
@@ -238,14 +239,14 @@ const Temporizador = forwardRef(({ onTimeOut }, ref) => {
   }));
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="text-2xl">{timeLeft}s</div>
-      <div className="flex gap-2 mt-2">
-        <button onClick={handlePause} className="border-2 px-4 py-2">
-          Pausar
+    <div className="flex flex-col items-center justify-center ">
+      <div className="text-4xl mb-2">{timeLeft}s</div>
+      <div className="flex gap-2 ml-2">
+        <button onClick={handlePause} className="">
+          <FaPause />
         </button>
-        <button onClick={handleResume} className="border-2 px-4 py-2">
-          Reanudar
+        <button onClick={handleResume} className="">
+          <FaPlay />
         </button>
       </div>
     </div>

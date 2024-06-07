@@ -11,15 +11,15 @@ import {
 } from "../../utils/utils";
 import Swal from "sweetalert2";
 import { current } from "@reduxjs/toolkit";
-// import Swal from "sweetalert2";
-// import { BsHourglassSplit } from "react-icons/bs";
-// import {
-//   FaRegPlayCircle,
-//   FaRegStopCircle,
-//   FaRedoAlt,
-//   FaEye,
-// } from "react-icons/fa";
-// import { MdSportsScore } from "react-icons/md";
+
+import { BsHourglassSplit } from "react-icons/bs";
+import {
+  FaRegPlayCircle,
+  FaRegStopCircle,
+  FaRedoAlt,
+  FaEye,
+} from "react-icons/fa";
+import { MdSportsScore } from "react-icons/md";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -228,9 +228,14 @@ const Home = () => {
       </h1>
       <div className="mb-4 flex justify-between items-center">
         {/* Preguntas */}
-        <div>
-          <Link to="/admin" className="border">
-            Ver Preguntas
+
+        <div className="border-2 w-24 h-24 rounded-full p-3">
+          <Link to="/admin">
+            <p className="text-center">
+              {" "}
+              Ver <br />
+              Preguntas
+            </p>
           </Link>
         </div>
         {/* Temporizador */}
@@ -238,9 +243,9 @@ const Home = () => {
           <Temporizador ref={temporizadorRef} onTimeOut={handleTimeOut} />
         </div>
         {/* Ayudas */}
-        <div className="border flex flex-row ">
-          <div>
-            <p>Ayudas</p>
+        <div className="border border-black flex flex-row items-center  rounded-lg h-28 w-52">
+          <div className="border -rotate-90">
+            <p className="">Ayudas</p>
           </div>
           <div>
             <button
@@ -257,20 +262,20 @@ const Home = () => {
               className="font-bold py-2 px-4 rounded mr-2"
             >
               Reiniciar
-              {/* <FaRedoAlt className="h-5 w-5" /> */}
+              <FaRedoAlt className="h-5 w-5" />
             </button>
           </div>
         </div>
       </div>{" "}
       <br />
       <div className="border flex flex-row justify-between">
-        <div className="flex gap-1 mt-4">
+        <div className="">
           {/* <MdSportsScore className="h-7 w-7" /> */}
           <p className="text-base">
             Nivel Actual: <span className="font-bold text-lg">{nivel}</span>
           </p>
         </div>
-        <div className="flex gap-1 mt-4">
+        <div className="">
           {/* <MdSportsScore className="h-7 w-7" /> */}
           <p className="text-base">
             Puntaje actual:
