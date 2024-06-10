@@ -11,6 +11,7 @@ import {
 } from "../../utils/utils";
 import Swal from "sweetalert2";
 import ResetButton from "../../Components/Reset/ResetButton";
+// import NavigationButtons from "../../Components/Navigation/NavigationButtons";
 
 import { BsHourglassSplit } from "react-icons/bs";
 import {
@@ -222,7 +223,7 @@ const Home = () => {
   };
 
   const handleReset = () => {
-    // setCurrentPreguntaIndex(0);
+    setCurrentPreguntaIndex(0);
     setPuntaje(0);
     setNivel(1);
     setRespuestasCorrectas(0);
@@ -301,6 +302,17 @@ const Home = () => {
           )}
         </div>
       </div>
+      {/* <NavigationButtons
+        currentPreguntaIndex={currentPreguntaIndex}
+        setCurrentPreguntaIndex={setCurrentPreguntaIndex}
+        respondidas={respondidas}
+        setRespondidas={setRespondidas}
+        tiemposRestantes={tiemposRestantes}
+        setTiemposRestantes={setTiemposRestantes}
+        temporizadorRef={temporizadorRef}
+        preguntas={preguntas}
+        setAyuda={setAyuda}
+      /> */}
       <div className="flex justify-center mt-24 ">
         <button
           onClick={handlePrevious}
