@@ -91,9 +91,9 @@ const CustomCard = ({
       : "bg-white";
 
     return (
-      <div className="flex flex-row" key={respuesta.texto}>
+      <div className="border border-yellow-400" key={respuesta.texto}>
         <Card
-          className={`w-48 h-48 ${colorFondo}`}
+          className={`w-20 h-20 md:w-48 md:h-48 ${colorFondo}`}
           isPressable={!respondida}
           onClick={() => handleResCorrecta(respuesta)}
         >
@@ -102,36 +102,22 @@ const CustomCard = ({
       </div>
     );
   };
-  // const renderRespuesta = (respuesta) => {
-  //   const seleccionada = respuestasSeleccionadas[preguntaIndex];
-  //   const esSeleccionada =
-  //     seleccionada && seleccionada.texto === respuesta.texto;
-  //   const colorFondo = esSeleccionada
-  //     ? seleccionada.esCorrecta
-  //       ? "bg-green-500"
-  //       : "bg-red-500"
-  //     : "bg-white";
-
-  //   return (
-  //     <div className="flex flex-row" key={respuesta.texto}>
-  //       <Card
-  //         className={`w-48 h-48 ${colorFondo}`}
-  //         isPressable={!respondida}
-  //         onClick={() => handleResCorrecta(respuesta)}
-  //       >
-  //         <CardBody>{respuesta.texto}</CardBody>
-  //       </Card>
-  //     </div>
-  //   );
-  // };
 
   return (
     <div>
       {pregunta ? (
-        <div className="flex flex-col items-center">
-          <p className="border text-lg mb-12">{pregunta.preguntas}</p>
-          <div className="flex flex-row gap-4">
+        <div className="border h-96 mt-4 flex flex-col items-center">
+          <p className="border text-lg ">{pregunta.preguntas}</p>
+          <div className="border-2 mt-2 border-black flex gap-2 basis-1/2 ">
             {respuestasMostrar.map(renderRespuesta)}
+            {/* {respuestasMostrar.map((respuesta, index) => (
+              <div
+                key={index}
+                className=" border-2 border-black flex basis-1/2 "
+              >
+                {renderRespuesta(respuesta)}
+              </div>
+            ))} */}
           </div>
         </div>
       ) : (

@@ -26,10 +26,7 @@ const ResetButton = ({ handleReset }) => {
   };
 
   return (
-    <button
-      onClick={reiniciarJuego}
-      className="font-bold py-2 px-4 rounded mr-2 flex items-center"
-    >
+    <button onClick={reiniciarJuego} className="font-bold rounded">
       <FaRedoAlt className="h-5 w-5 ml-2" />
     </button>
   );

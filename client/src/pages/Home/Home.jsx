@@ -241,10 +241,9 @@ const Home = () => {
       </h1>
       <div className="mb-4 flex justify-between items-center">
         {/* Preguntas */}
-
-        <div className="border-2 w-24 h-24 rounded-full p-3">
+        <div className="border-2 w-20 h-20 rounded-full p-3">
           <Link to="/admin">
-            <p className="text-center">
+            <p className="text-xs text-center">
               {" "}
               Ver <br />
               Preguntas
@@ -256,19 +255,14 @@ const Home = () => {
           <Temporizador ref={temporizadorRef} onTimeOut={handleTimeOut} />
         </div>
         {/* Ayudas */}
-        <div className="border border-black flex flex-row items-center rounded-lg h-28 w-48">
+        <div className="border border-black flex rounded-lg h-14 w-32 md:h-28 md:w-48">
           <div className="border -rotate-90">
-            <p className="">Ayudas</p>
+            <p className="text-xs font-bold ml-0">Ayudas</p>
           </div>
-          <div>
-            <button
-              onClick={manejarAyuda}
-              className="border-2 rounded-full font-bold px-2 "
-            >
+          <div className="flex ">
+            <button onClick={manejarAyuda} className="border-2 font-bold">
               50/50
             </button>
-          </div>
-          <div>
             <ResetButton handleReset={handleReset} />
           </div>
         </div>
@@ -289,7 +283,7 @@ const Home = () => {
           </p>
         </div>
       </div>
-      <div className={`flex justify-center mt-5`}>
+      <div>
         <div>
           {preguntas.length > 0 && (
             <CustomCard

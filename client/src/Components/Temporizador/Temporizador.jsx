@@ -239,13 +239,13 @@ const Temporizador = forwardRef(({ onTimeOut }, ref) => {
   }));
 
   return (
-    <div className="flex flex-col items-center justify-center ">
-      <div className="text-4xl mb-2">{timeLeft}s</div>
-      <div className="flex gap-2 ml-2">
+    <div className="bg-[#0D0D0D] flex flex-col items-center justify-center ">
+      <div className="text-lg mb-2 text-white">{timeLeft}s</div>
+      <div className="flex">
         <button onClick={handlePause} className="">
-          <FaPause />
+          <FaPause className="bg-white" />
         </button>
-        <button onClick={handleResume} className="">
+        <button onClick={handleResume} className="bg-white">
           <FaPlay />
         </button>
       </div>
