@@ -109,15 +109,15 @@ const CustomCard = ({
         <div className="border h-96 mt-4 flex flex-col items-center">
           <p className="border text-lg ">{pregunta.preguntas}</p>
           <div className="border-2 mt-2 border-black flex gap-2 basis-1/2 ">
-            {respuestasMostrar.map(renderRespuesta)}
-            {/* {respuestasMostrar.map(( respuesta, index) => (
+            {/* {respuestasMostrar.map(renderRespuesta)} */}
+            {respuestasMostrar.map((respuesta, index) => (
               <div
                 key={index}
                 className=" border-2 border-black flex basis-1/2 "
               >
                 {renderRespuesta(respuesta)}
               </div>
-            ))} */}
+            ))}
           </div>
         </div>
       ) : (
